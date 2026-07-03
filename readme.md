@@ -1,39 +1,50 @@
 # 🚀 QueryPilot AI
 
-> **AI-Powered Database Copilot using Large Language Models (LLMs)**
+> **An AI-Powered Database Copilot that transforms natural language into intelligent SQL insights.**
 
-QueryPilot AI is a full-stack AI application that enables users to connect relational databases, understand their schema automatically, generate SQL queries from natural language, explain generated SQL, optimize queries, recommend indexes, and visualize query results using AI.
+QueryPilot AI is a full-stack AI application that enables users to securely connect relational databases and interact with them using natural language. Instead of writing SQL manually, users can ask questions in plain English, and the AI will generate SQL queries, explain them, optimize them, and visualize the results.
 
-The project combines **React**, **FastAPI**, **PostgreSQL**, **JWT Authentication**, and **Google Gemini** to create an intelligent database assistant capable of helping users interact with databases without writing SQL manually.
+The project is built using **React**, **FastAPI**, **PostgreSQL**, **SQLAlchemy**, **JWT Authentication**, and will integrate **Google Gemini** for AI-powered database interactions.
 
 ---
 
-# ✨ Features Implemented
+# 🌟 Features
 
 ## 🔐 Authentication
 
 - User Registration
 - Secure Password Hashing (bcrypt)
 - JWT Authentication
-- Login API
-- Protected Backend APIs
-- Current User Endpoint (`/api/auth/me`)
+- Login & Logout
+- Protected API Endpoints
+- Current User API (`/api/auth/me`)
 - Persistent Login
 - Protected Frontend Routes
-- Logout
+- Authentication Context
+
+---
+
+## 🗄 Database Module
+
+- Database Connection API
+- PostgreSQL Connectivity Testing
+- Dynamic SQLAlchemy Engine
+- Connection Validation
+- Database Connection Model
+- Health Check Endpoint
 
 ---
 
 ## 💻 Frontend
 
-- React + Vite
+- React 19
+- Vite
 - Tailwind CSS
 - React Router
-- Axios API Client
-- Authentication Context
+- Axios
 - Responsive UI
 
-### Available Pages
+### Pages
 
 - Login
 - Signup
@@ -52,28 +63,32 @@ The project combines **React**, **FastAPI**, **PostgreSQL**, **JWT Authenticatio
 - SQLAlchemy ORM
 - PostgreSQL
 - REST APIs
-- Layered Architecture
 - Pydantic Validation
-- JWT Authentication
 - Dependency Injection
+- Layered Architecture
 
 ---
 
 # 🏗 System Architecture
 
 ```text
-                React Frontend
-                       │
-                       │ REST API
-                       ▼
-                FastAPI Backend
-                       │
-        ┌──────────────┴──────────────┐
-        │                             │
- Authentication Module          Database Module
+                    React Frontend
+                           │
+                           ▼
+                      Axios Client
+                           │
+                           ▼
+                     FastAPI Backend
+                           │
+        ┌──────────────────┴──────────────────┐
+        │                                     │
+ Authentication Module              Database Module
+        │                                     │
+        ▼                                     ▼
+ PostgreSQL (App Database)        User Database Connection
         │
         ▼
- PostgreSQL (Application Database)
+ SQLAlchemy ORM
 ```
 
 ---
@@ -81,91 +96,194 @@ The project combines **React**, **FastAPI**, **PostgreSQL**, **JWT Authenticatio
 # 🔐 Authentication Flow
 
 ```text
+User
+
+↓
+
 Signup
-   │
-   ▼
+
+↓
+
 POST /api/auth/signup
-   │
-   ▼
+
+↓
+
 Validate Input
-   │
-   ▼
+
+↓
+
 Hash Password
-   │
-   ▼
+
+↓
+
 Store User
-   │
-   ▼
+
+↓
+
 PostgreSQL
 ```
 
 ---
 
 ```text
+User
+
+↓
+
 Login
-   │
-   ▼
+
+↓
+
 POST /api/auth/login
-   │
-   ▼
+
+↓
+
 Verify Password
-   │
-   ▼
+
+↓
+
 Generate JWT
-   │
-   ▼
+
+↓
+
 Return Access Token
-   │
-   ▼
+
+↓
+
 Store Token (Frontend)
 ```
 
 ---
 
 ```text
-Protected Route
-      │
-      ▼
-JWT Exists?
-      │
- ┌────┴─────┐
- │          │
-Yes         No
- │          │
- ▼          ▼
-GET /auth/me
-            Redirect Login
- │
- ▼
+User
+
+↓
+
+Open Protected Route
+
+↓
+
+JWT Available?
+
+↓
+
+No ─────────────► Redirect to Login
+
+↓
+
+Yes
+
+↓
+
+GET /api/auth/me
+
+↓
+
+Token Valid?
+
+↓
+
+Yes
+
+↓
+
 Dashboard
+
+↓
+
+No
+
+↓
+
+Remove Token
+
+↓
+
+Redirect Login
+```
+
+---
+
+# 🗄 Database Connection Flow
+
+```text
+User
+
+↓
+
+Enter Database Credentials
+
+↓
+
+POST /api/database/connect
+
+↓
+
+FastAPI
+
+↓
+
+Create Temporary SQLAlchemy Engine
+
+↓
+
+Test Connection
+
+↓
+
+Success?
+
+↓
+
+Yes
+
+↓
+
+Ready for Schema Discovery
+
+↓
+
+No
+
+↓
+
+Return Error Message
 ```
 
 ---
 
 # 📂 Project Structure
 
-```
+```text
 QueryPilot-AI/
 
 ├── frontend/
-│   ├── src/
 │   ├── public/
+│   ├── src/
+│   │   ├── api/
+│   │   ├── components/
+│   │   ├── context/
+│   │   ├── layouts/
+│   │   ├── pages/
+│   │   └── styles/
 │   └── package.json
 │
 ├── backend/
 │   ├── app/
 │   │   ├── config/
+│   │   ├── llm/
 │   │   ├── models/
 │   │   ├── routers/
 │   │   ├── schemas/
 │   │   ├── services/
 │   │   ├── utils/
-│   │   ├── llm/
 │   │   └── main.py
 │   │
 │   ├── requirements.txt
 │   └── .env
 │
+├── docker-compose.yml
 └── README.md
 ```
 
@@ -181,126 +299,89 @@ QueryPilot-AI/
 - React Router DOM
 - Axios
 
+---
+
 ## Backend
 
 - FastAPI
-- SQLAlchemy
+- SQLAlchemy ORM
 - PostgreSQL
 - JWT Authentication
 - Passlib (bcrypt)
 - Pydantic
-- Python 3
 
-## AI / LLM (Upcoming)
+---
+
+## AI (Upcoming)
 
 - Google Gemini
 - LangChain
-- SQL Agent
 - Prompt Engineering
+- SQL Agent
 
 ---
 
-# 📌 Backend Architecture
+# 🚀 Upcoming Features
 
-```text
-React
-
-      │
-
-Axios
-
-      │
-
-FastAPI Router
-
-      │
-
-Service Layer
-
-      │
-
-SQLAlchemy ORM
-
-      │
-
-PostgreSQL
-```
-
----
-
-# 📌 Authentication Architecture
-
-```text
-React
-
-↓
-
-Login
-
-↓
-
-JWT
-
-↓
-
-localStorage
-
-↓
-
-Authorization Header
-
-↓
-
-FastAPI
-
-↓
-
-JWT Verification
-
-↓
-
-Current User
-
-↓
-
-Protected API
-```
-
----
-
-# 🚧 Upcoming Features
-
-- Database Connection Module
 - Automatic Schema Discovery
 - Multi-Database Support (PostgreSQL / MySQL)
+- Database Metadata Extraction
 - Natural Language to SQL
-- SQL Query Explanation
-- AI Query Optimization
+- AI SQL Explanation
+- SQL Optimization
 - Index Recommendation
 - Safe SQL Execution
+- Interactive Charts
 - Query History
 - Saved Queries
-- Interactive Charts & Visualizations
-- AI Chat Interface
+- AI Chat Sessions
 - Docker Deployment
+- Cloud Deployment
 
 ---
 
 # 🎯 Project Goal
 
-QueryPilot AI is designed to act as an **AI Database Copilot** rather than a simple SQL generator.
+QueryPilot AI is designed to become an intelligent **Database Copilot** capable of helping developers, analysts, and non-technical users interact with relational databases using natural language.
 
-The objective is to enable users to interact with relational databases using natural language while providing intelligent assistance through:
+The objective is not only to generate SQL but also to:
 
-- Schema Understanding
-- SQL Generation
-- SQL Explanation
-- Query Optimization
-- Secure Execution
-- Result Visualization
+- Understand database schemas
+- Explain generated SQL
+- Optimize queries
+- Recommend indexes
+- Execute queries securely
+- Visualize results
+- Assist users conversationally
+
+---
+
+# 📈 Current Progress
+
+```text
+█████████████████████████░░░░░░░░░░░░░░░░░░░░░░░ 50%
+
+✅ React Frontend
+✅ FastAPI Backend
+✅ PostgreSQL Integration
+✅ JWT Authentication
+✅ Protected Routes
+✅ Database Connection Module
+⏳ Schema Discovery
+⏳ Gemini Integration
+⏳ SQL Generation
+⏳ SQL Explanation
+⏳ SQL Optimization
+⏳ Data Visualization
+⏳ AI Chat
+```
 
 ---
 
 # 👨‍💻 Author
 
 **Saransh Neema**
+
+---
+
+⭐ If you find this project interesting, consider starring the repository.
