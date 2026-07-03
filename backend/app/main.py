@@ -1,9 +1,10 @@
 from fastapi import FastAPI
-from app.config.database import Base
-from app.config.database import engine
-from app.models.user import User
-from app.routers.auth import router as auth_router
 from fastapi.middleware.cors import CORSMiddleware
+from app.config.database import Base, engine
+from app.models.user import User
+from app.models.database_connection import DatabaseConnection
+from app.routers.auth import router as auth_router
+from app.routers.database import router as database_router
 
 Base.metadata.create_all(bind=engine)
 
@@ -23,7 +24,9 @@ app.add_middleware(
 )
 
 app.include_router(auth_router)
+app.include_router(database_router)
 
+# Root Endpoint
 @app.get("/")
 def root():
     return {
