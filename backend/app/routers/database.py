@@ -1,6 +1,11 @@
 from fastapi import APIRouter
+from fastapi import Depends
+from sqlalchemy.orm import Session
+from app.config.database import get_db
+from app.models.user import User
 from app.schemas.database import DatabaseConnect
-from app.services.database_service import test_connection
+from app.services.database_service import connect_database
+from app.utils.dependencies import get_current_user
 
 router = APIRouter(
     prefix="/api/database",
@@ -14,13 +19,24 @@ def health():
     }
 
 @router.post("/connect")
-def connect_database(data: DatabaseConnect):
-    success, message = test_connection(data)
+def connect(
+    data: DatabaseConnect,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+
+    success, message = connect_database(
+        data=data,
+        current_user=current_user,
+        db=db,
+    )
+
     if success:
         return {
             "success": True,
             "message": message,
         }
+
     return {
         "success": False,
         "message": message,
