@@ -15,22 +15,18 @@ router = APIRouter(
     tags=["Authentication"],
 )
 
-
 @router.post("/signup")
 def signup(
     user: UserSignup,
     db: Session = Depends(get_db),
 ):
-    created_user = register_user(user, db)
-    if created_user is None:
+    result = register_user(user, db)
+    if result is None:
         raise HTTPException(
             status_code=400,
             detail="Email already registered",
         )
-
-    return {
-        "message": "User registered successfully"
-    }
+    return result
 
 @router.get("/health")
 def health():
@@ -43,7 +39,6 @@ def login(
     user: UserLogin,
     db: Session = Depends(get_db),
 ):
-
     result = login_user(
         user.email,
         user.password,
@@ -55,14 +50,12 @@ def login(
             status_code=401,
             detail="Invalid email or password",
         )
-
     return result
 
 @router.get("/me")
 def me(
     current_user: User = Depends(get_current_user),
 ):
-
     return {
         "id": current_user.id,
         "full_name": current_user.full_name,

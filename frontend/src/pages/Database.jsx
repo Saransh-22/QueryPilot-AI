@@ -1,162 +1,122 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { listDatabases, activateDatabase } from "../services/databaseService";
+import DatabaseCard from "../components/database/DatabaseCard";
+import ConnectDatabaseModal from "../components/database/ConnectDatabaseModal";
+import RenameDatabaseModal from "../components/database/RenameDatabaseModal";
+import DeleteDatabaseDialog from "../components/database/DeleteDatabaseDialog";
+import { useDatabase } from "../context/DatabaseContext";
 
 function Database() {
-  const [form, setForm] = useState({
-    dbType: "PostgreSQL",
-    host: "",
-    port: "",
-    database: "",
-    username: "",
-    password: "",
-  });
+  const [databases, setDatabases] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showConnectModal, setShowConnectModal] = useState(false);
+  const [renameDatabaseData, setRenameDatabaseData] = useState(null);
+  const [deleteDatabaseData, setDeleteDatabaseData] = useState(null);
+  const { fetchActiveDatabase } = useDatabase();
 
-  function handleChange(e) {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
+  async function fetchDatabases() {
+    try {
+      setLoading(true);
+      const response = await listDatabases();
+      setDatabases(response.databases);
+    } catch (error) {
+      console.error(error);
+      alert("Failed to fetch databases");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function refreshDatabaseState() {
+    await fetchDatabases();
+    await fetchActiveDatabase();
+  }
+
+  useEffect(() => {
+    refreshDatabaseState();
+  }, []);
+
+  async function handleActivate(id) {
+    const response = await activateDatabase(id);
+    alert(response.message);
+    if (response.success) {
+      await refreshDatabaseState();
+    }
   }
 
   return (
-    <div className="max-w-5xl mx-auto p-8">
-
-      <h1 className="text-4xl font-bold mb-8">
-        Database Connections
-      </h1>
-
-      {/* Current Connection */}
-      <div className="bg-white border rounded-lg shadow p-6 mb-8">
-
-        <h2 className="text-xl font-semibold mb-3">
-          Current Connection
-        </h2>
-
-        <p className="text-red-500">
-          ● No Database Connected
-        </p>
-
-      </div>
-
-      {/* Connection Form */}
-      <div className="bg-white border rounded-lg shadow p-6">
-
-        <h2 className="text-xl font-semibold mb-6">
-          Add New Connection
-        </h2>
-
-        <div className="grid md:grid-cols-2 gap-5">
-
-          <div>
-            <label className="block mb-2 font-medium">
-              Database Type
-            </label>
-
-            <select
-              name="dbType"
-              value={form.dbType}
-              onChange={handleChange}
-              className="w-full border rounded-lg p-3"
-            >
-              <option>PostgreSQL</option>
-              <option>MySQL</option>
-              <option>SQLite</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block mb-2 font-medium">
-              Host
-            </label>
-
-            <input
-              type="text"
-              name="host"
-              value={form.host}
-              onChange={handleChange}
-              className="w-full border rounded-lg p-3"
-              placeholder="localhost"
-            />
-          </div>
-
-          <div>
-            <label className="block mb-2 font-medium">
-              Port
-            </label>
-
-            <input
-              type="text"
-              name="port"
-              value={form.port}
-              onChange={handleChange}
-              className="w-full border rounded-lg p-3"
-              placeholder="5432"
-            />
-          </div>
-
-          <div>
-            <label className="block mb-2 font-medium">
-              Database Name
-            </label>
-
-            <input
-              type="text"
-              name="database"
-              value={form.database}
-              onChange={handleChange}
-              className="w-full border rounded-lg p-3"
-            />
-          </div>
-
-          <div>
-            <label className="block mb-2 font-medium">
-              Username
-            </label>
-
-            <input
-              type="text"
-              name="username"
-              value={form.username}
-              onChange={handleChange}
-              className="w-full border rounded-lg p-3"
-            />
-          </div>
-
-          <div>
-            <label className="block mb-2 font-medium">
-              Password
-            </label>
-
-            <input
-              type="password"
-              name="password"
-              value={form.password}
-              onChange={handleChange}
-              className="w-full border rounded-lg p-3"
-            />
-          </div>
+    <div className="p-8">
+      <div className="flex justify-between items-center mb-8">
+        <div>
+          <h1 className="text-3xl font-bold">
+            Database Connections
+          </h1>
+          <p className="text-gray-500 mt-2">
+            Manage your connected databases
+          </p>
         </div>
 
         <button
-          className="mt-8 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg"
+          onClick={() => setShowConnectModal(true)}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-lg"
         >
-          Connect Database
+          + Connect Database
         </button>
       </div>
 
-      {/* Saved Connections */}
-      <div className="bg-white border rounded-lg shadow p-6 mt-8">
+      {loading ? (
+        <div className="text-center py-20">
+          Loading databases...
+        </div>
+      ) : databases.length === 0 ? (
+        <div className="bg-white rounded-xl shadow p-10 text-center">
+          <div className="text-6xl">
+            🗄️
+          </div>
+          <h2 className="text-2xl font-bold mt-5">
+            No Databases Connected
+          </h2>
+          <p className="text-gray-500 mt-3">
+            Connect your first PostgreSQL database to begin.
+          </p>
+        </div>
+      ) : (
+        <div className="grid md:grid-cols-2 gap-6">
+          {databases.map((database) => (
+            <DatabaseCard
+              key={database.id}
+              database={database}
+              onActivate={handleActivate}
+              onRename={setRenameDatabaseData}
+              onDelete={setDeleteDatabaseData}
+            />
+          ))}
+        </div>
+      )}
 
-        <h2 className="text-xl font-semibold mb-4">
-          Saved Connections
-        </h2>
+      {showConnectModal && (
+        <ConnectDatabaseModal
+          onClose={() => setShowConnectModal(false)}
+          onSuccess={refreshDatabaseState}
+        />
+      )}
 
-        <p className="text-gray-500">
-          No saved database connections.
-        </p>
+      {renameDatabaseData && (
+        <RenameDatabaseModal
+          database={renameDatabaseData}
+          onClose={() => setRenameDatabaseData(null)}
+          onSuccess={refreshDatabaseState}
+        />
+      )}
 
-      </div>
+      {deleteDatabaseData && (
+        <DeleteDatabaseDialog
+          database={deleteDatabaseData}
+          onClose={() => setDeleteDatabaseData(null)}
+          onSuccess={refreshDatabaseState}
+        />
+      )}
     </div>
   );
 }
-
 export default Database;

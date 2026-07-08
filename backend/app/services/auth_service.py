@@ -7,7 +7,6 @@ from app.utils.jwt import create_access_token
 
 
 def register_user(user: UserSignup, db: Session):
-    # Check if email already exists
     existing_user = (
         db.query(User)
         .filter(User.email == user.email)
@@ -17,17 +16,29 @@ def register_user(user: UserSignup, db: Session):
     if existing_user:
         return None
 
-    # Create new user
     new_user = User(
         full_name=user.full_name,
         email=user.email,
         hashed_password=hash_password(user.password),
     )
-
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
-    return new_user
+    token = create_access_token(
+        {
+            "sub": new_user.email,
+        }
+    )
+
+    return {
+        "access_token": token,
+        "token_type": "bearer",
+        "user": {
+            "id": new_user.id,
+            "full_name": new_user.full_name,
+            "email": new_user.email,
+        },
+    }
 
 def login_user(email: str, password: str, db: Session):
     user = (
