@@ -4,60 +4,72 @@
 
 ---
 
-## 📖 Overview
+# 📖 Overview
 
 QueryPilot AI is a Full Stack AI application that bridges the gap between humans and relational databases.
 
 Instead of writing SQL manually, users can simply ask questions in natural language. QueryPilot AI understands the connected database schema, generates optimized SQL queries using AI, executes them safely, and explains the results.
 
-The project is being built with production-grade architecture using React, FastAPI, PostgreSQL, SQLAlchemy, JWT Authentication, and Google's Gemini LLM.
+The project follows a production-ready architecture built with **React**, **FastAPI**, **PostgreSQL**, **SQLAlchemy**, **JWT Authentication**, and **Google Gemini**.
 
 ---
 
 # ✨ Features
 
-## ✅ Authentication
+## 🔐 Authentication
 
 - User Registration
 - Secure Login
+- Auto Login after Signup
 - JWT Authentication
 - Protected Routes
 - Password Hashing (bcrypt)
+- Logout
+- User Session Management
 
 ---
 
-## ✅ Database Management
+## 🗄 Database Management
 
 - Connect PostgreSQL Databases
-- Validate Credentials
+- Validate Database Credentials
 - Automatic Schema Discovery
 - Table & Column Extraction
 - Primary Key Detection
 - Foreign Key Detection
-- Store Database Connections
+- Store Database Schema as JSON
 - User-specific Database Connections
+- Prevent Duplicate Connections
+- Rename Database Connections
+- Delete Database Connections
+- Active Database Selection
+- Automatic Active Database Switching
+- Global Active Database State
 
 ---
 
-## ✅ Frontend
+## 💻 Frontend
 
 - React + Vite
 - Tailwind CSS
-- Responsive Dashboard
+- Responsive UI
+- Dashboard
+- Database Management
 - Authentication Pages
-- Database Management UI
+- Protected Routes
 - Chat Interface (UI Ready)
 - History Page
 - Settings Page
+- Global Auth Context
+- Global Database Context
+- Automatic UI Refresh
 
 ---
 
-## 🔄 Upcoming Features
+## 🤖 AI (Coming Next)
 
-- Multiple Database Management
-- Active Database Selection
-- AI SQL Generation
-- SQL Execution Engine
+- Natural Language → SQL
+- SQL Execution
 - SQL Explanation
 - Query Optimization
 - Interactive Charts
@@ -69,7 +81,7 @@ The project is being built with production-grade architecture using React, FastA
 
 # 🏗 Project Architecture
 
-```
+```text
                     +----------------------+
                     |      React UI        |
                     +----------+-----------+
@@ -100,37 +112,30 @@ The project is being built with production-grade architecture using React, FastA
 
 ---
 
-# 🔄 Authentication Flow
+# 🔐 Authentication Flow
 
-```
+```text
 User
-
-↓
-
+   │
+   ▼
 Signup
-
-↓
-
+   │
+   ▼
 Password Hashing (bcrypt)
-
-↓
-
+   │
+   ▼
 PostgreSQL
-
-↓
-
+   │
+   ▼
 Login
-
-↓
-
+   │
+   ▼
 JWT Token
-
-↓
-
+   │
+   ▼
 Protected API
-
-↓
-
+   │
+   ▼
 Authenticated User
 ```
 
@@ -138,76 +143,63 @@ Authenticated User
 
 # 🗄 Database Connection Flow
 
-```
+```text
 User
-
-↓
-
+   │
+   ▼
 JWT Authentication
-
-↓
-
+   │
+   ▼
 Connect Database
-
-↓
-
+   │
+   ▼
+Validate Credentials
+   │
+   ▼
 Temporary SQLAlchemy Engine
-
-↓
-
-Test Connection
-
-↓
-
+   │
+   ▼
 Read Database Schema
-
-↓
-
+   │
+   ▼
 Convert Schema → JSON
-
-↓
-
-Save Connection
-
-↓
-
-Store Schema
-
-↓
-
-Success
+   │
+   ▼
+Store Connection
+   │
+   ▼
+Active Database
 ```
 
 ---
 
 # 📂 Project Structure
 
-```
-QueryPilot-AI/
-
+```text
+QueryPilot-AI
 │
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── layouts/
-│   │   ├── pages/
-│   │   ├── api/
-│   │   ├── routes/
-│   │   └── styles/
+├── frontend
+│   ├── src
+│   │   ├── api
+│   │   ├── components
+│   │   ├── context
+│   │   ├── layouts
+│   │   ├── pages
+│   │   ├── services
+│   │   └── styles
 │   │
 │   └── package.json
 │
-├── backend/
-│   ├── app/
-│   │
-│   ├── config/
-│   ├── routers/
-│   ├── services/
-│   ├── schemas/
-│   ├── models/
-│   ├── utils/
-│   ├── llm/
-│   └── main.py
+├── backend
+│   ├── app
+│   │   ├── config
+│   │   ├── llm
+│   │   ├── models
+│   │   ├── routers
+│   │   ├── schemas
+│   │   ├── services
+│   │   ├── utils
+│   │   └── main.py
 │
 └── README.md
 ```
@@ -224,17 +216,17 @@ QueryPilot-AI/
 - React Router
 - Axios
 
-## Backend
+### Backend
 
 - FastAPI
 - SQLAlchemy
 - PostgreSQL
 - Pydantic
-- JWT
+- JWT Authentication
 - Passlib
 - bcrypt
 
-## AI
+### AI
 
 - Google Gemini
 - Prompt Engineering
@@ -244,40 +236,76 @@ QueryPilot-AI/
 # 🚀 Current Development Status
 
 | Module | Status |
-|---------|--------|
-| Frontend UI | ✅ |
-| Authentication | ✅ |
-| JWT Security | ✅ |
-| PostgreSQL Integration | ✅ |
-| Database Connection | ✅ |
-| Schema Discovery | ✅ |
-| Multiple Databases | 🚧 |
-| Gemini Integration | ⏳ |
-| Natural Language to SQL | ⏳ |
-| SQL Execution | ⏳ |
-| Data Visualization | ⏳ |
-| Deployment | ⏳ |
+|----------|--------|
+| Frontend UI | ✅ Complete |
+| Authentication | ✅ Complete |
+| JWT Security | ✅ Complete |
+| PostgreSQL Integration | ✅ Complete |
+| Database Connection | ✅ Complete |
+| Schema Discovery | ✅ Complete |
+| Database CRUD | ✅ Complete |
+| Active Database Management | ✅ Complete |
+| Global State Management | ✅ Complete |
+| Gemini Integration | 🚧 Next Phase |
+| Natural Language to SQL | ⏳ Planned |
+| SQL Execution | ⏳ Planned |
+| Query Explanation | ⏳ Planned |
+| Query Optimization | ⏳ Planned |
+| Data Visualization | ⏳ Planned |
+| Docker Deployment | ⏳ Planned |
 
 ---
 
-# 📌 Future Roadmap
+# 🛣 Development Roadmap
 
+## ✅ Phase 1
+- Project Setup
+- Backend Structure
+- Frontend Structure
+
+## ✅ Phase 2
+- Authentication
+- JWT Security
+
+## ✅ Phase 3
+- PostgreSQL Integration
+- Schema Reader
+
+## ✅ Phase 4
 - Database Management
-- AI SQL Generation
-- Query Execution
-- AI Query Explanation
+- Multiple Database Support
+- Active Database Selection
+- React Context Integration
+- Dashboard Integration
+- Chat Integration
+
+## 🚧 Phase 5 (Current)
+
+- Gemini Integration
+- Natural Language → SQL
+- SQL Execution
+- SQL Explanation
 - Query Optimization
-- Dashboard Analytics
-- Docker Deployment
+
+## 📅 Phase 6
+
+- Charts & Data Visualization
+- Query History
+- Export Results
+
+## 📅 Phase 7
+
+- Docker
 - CI/CD
-- Cloud Deployment
+- AWS Deployment
+- Production Release
 
 ---
 
 # 👨‍💻 Author
 
-**Saransh Neema**
+## Saransh Neema
 
-AI • Full Stack • Machine Learning • Backend Development
+**AI Engineer | Full Stack Developer | Machine Learning Enthusiast**
 
----
+Building AI-powered developer tools that simplify database interactions through Large Language Models.
